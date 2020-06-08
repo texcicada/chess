@@ -1,0 +1,419 @@
+\documentclass[12pt]{article}
+\usepackage{xcolor}
+\pagecolor{red!3}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\setmainfont{Noto Serif}
+\newfontfamily\fchess{GaramondExtended}%FreeSerif}%Meiryo}%Arial Unicode MS}%[Scale=1.1]%DejaVu Sans Mono}
+\newfontface\cfont[Mapping=latin-to-chess,Colour=blue,Scale=2]{Noto Sans Symbols}
+
+
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{math}
+\usetikzlibrary{shapes.geometric}
+
+
+
+\newcommand\wsqc{red!3}
+\newcommand\bsqc{blue!15}
+
+\expandafter\newcommand\csname yc1\endcsname{\bsqc}
+\expandafter\newcommand\csname yc2\endcsname{\wsqc}
+
+
+%-----------------------------------------------------
+% the board
+% orientation of the board = bottom right is white square for each player
+\newcommand\drawtheboard{%
+\begin{tikzpicture}[node distance=0pt,remember picture]
+%start = anchor: bottom left = black
+\node[rectangle,fill={\csname yc1\endcsname},] (a1) {{\fchess \phantom ♚ }} ;
+%file 1:
+\foreach \xx/\x/\fc in {b/a/2,c/b/1,d/c/2,e/d/1,f/e/2,g/f/1,h/g/2}
+{
+\node[rectangle,fill={\csname yc\fc\endcsname},right=of \x 1] (\xx 1) {{\fchess \phantom ♚ }};
+}
+%aceg:
+\foreach \rank in {a,c,e,g}
+{
+\foreach \yy/\y/\fc in {2/1/2,3/2/1,4/3/2,5/4/1,6/5/2,7/6/1,8/7/2}
+{
+\node[rectangle,fill={\csname yc\fc\endcsname},above=of \rank\y] (\rank\yy) {{\fchess \phantom ♚ }};
+}
+}%----
+%bdfh:
+\foreach \rank in {b,d,f,h}
+{
+\foreach \yy/\y/\fc in {2/1/1,3/2/2,4/3/1,5/4/2,6/5/1,7/6/2,8/7/1}
+{
+\node[rectangle,fill={\csname yc\fc\endcsname},above=of \rank\y] (\rank\yy) {{\fchess \phantom ♚ }};
+}
+}
+% the letters
+\foreach \letter in {a,b,c,d,e,f,g,h}
+{
+\node[rectangle,fill={\csname yc2\endcsname},below=of \letter 1] (\letter) {{\scriptsize\strut \letter}};
+}
+% the numbers
+\foreach \number in {1,2,3,4,5,6,7,8}
+{
+\node[rectangle,fill={\csname yc2\endcsname},left=of a\number] (\number) {{\scriptsize\number}};
+}
+% the edge of the board
+\draw  (a1.south west) rectangle (h8.north east);
+\end{tikzpicture}
+}
+
+
+%-----------------------------------------------------
+% fill the board with numbers
+\newcount\squarenum
+\newcommand\drawtheboardnum{%
+% number the squares
+\begin{tikzpicture}[node distance=0pt,remember picture, overlay]
+\foreach \letter [count=\x] in {a,b,c,d,e,f,g,h}
+{
+\foreach \number [count=\y] in {1,2,3,4,5,6,7,8}
+{
+\pgfmathparse{(8*(\y-1) + \x)}
+\pgfmathfloatparsenumber{\pgfmathresult}
+\pgfmathfloattoint{\pgfmathresult}
+\node at (\letter\number) {\pgfmathresult};%
+}
+}
+\end{tikzpicture}
+}
+
+
+
+
+
+
+
+%============================ exposed
+\newcommand\drawthepath[1]{%
+\begin{tikzpicture}[remember picture,overlay]
+% arrow indicator path
+\foreach \p in {#1}
+\node at (\p) [fill=red!50!yellow!90, rounded corners, opacity=0.6] {{\fchess \phantom ♚ }};
+\end{tikzpicture}
+}
+%============================ attack
+\newcommand\drawthepathb[1]{%
+\begin{tikzpicture}[remember picture,overlay]
+% arrow indicator path
+\foreach \p [count=\x] in {#1}
+\ifnum\x=1%
+{\node at (\p) [draw, circle, red!30!yellow, very thick] {{\fchess \phantom ♚ }};}
+\else
+{\node at (\p) [fill=yellow!90!green, rounded corners, opacity=0.9] {{\fchess \phantom ♚ }};}
+\fi;
+\end{tikzpicture}
+}
+
+%============================ coverage
+\newcommand\drawthepathc[1]{%
+\begin{tikzpicture}[remember picture,overlay]
+% arrow indicator path
+\foreach \p [count=\x] in {#1}
+\ifnum\x=1%
+{\node at (\p) [draw, circle, red!3, thick] {{\fchess \phantom ♚ }};}
+\else
+{\node at (\p) [fill=violet!52] {{\fchess \phantom ♚ }};}
+\fi;
+\end{tikzpicture}
+}
+
+
+
+%-----------------------------------------------------
+\newcommand\setwhitepieces[1]{%
+\begin{tikzpicture}[remember picture,overlay]
+%white:
+\foreach \sq/\cp/\cpn in {#1}
+{
+\node (\cpn) at (\sq) [inner sep=-0.5pt] {{\fchess \cp}};
+}
+\end{tikzpicture}
+}
+
+%-----------------------------------------------------
+\newcommand\setblackpieces[1]{%
+\begin{tikzpicture}[remember picture,overlay]
+%black:
+\foreach \sq/\cp/\cpn in {#1}
+{
+\node (\cpn) at (\sq) [inner sep=-0.5pt] {{\fchess \cp}};
+}
+\end{tikzpicture}
+}
+
+%-----------------------------------------------------
+\newcommand\drawthearrow[2]{%start piece, end piece
+\begin{tikzpicture}[remember picture,overlay]
+\draw[->,very	 thick, blue] (#1)--(#2);
+\end{tikzpicture}
+}
+\newcommand\drawthearrowb[2]{%start piece, end piece
+\begin{tikzpicture}[remember picture,overlay]
+\draw[->,very	 thick, red] (#1)--(#2);
+\end{tikzpicture}
+}
+
+
+
+%%the pieces:
+%%♔♕♖♗♘♙♚♛♜♝♞♟
+\newcommand\setupboard{%
+%Queens are on their own colours: d1 and d8.
+\setwhitepieces{a1/♖/wqr,b1/♘/wqn,c1/♗/wqb,d1/♕/wq,e1/♔/wk,f1/♗/wkb,g1/♘/wkn,h1/♖/wkr}
+\setwhitepieces{a2/♙,b2/♙,c2/♙,d2/♙,e2/♙,f2/♙,g2/♙,h2/♙}
+\setblackpieces{a8/♜/bqr,b8/♞/bqn,c8/♝/bqb,d8/♛/bq,e8/♚/bk,f8/♝/bkb,g8/♞/bkn,h8/♜/bkr}
+\setblackpieces{a7/♟,b7/♟,c7/♟,d7/♟,e7/♟,f7/♟,g7/♟,h7/♟}
+}
+
+% nodetext(=glyph)/nodename
+%\newcommand\wq{♕/wq}
+%\newcommand\bk{♚/bk}
+
+\begin{document}
+\section*{{\cfont{cwn}} A file about chess}
+Chessboards with TikZ.
+\bigskip
+
+\drawtheboard
+\drawthepath{a4,b5,c6,d7,e8}
+\setwhitepieces{a4/♕/wq}
+\setblackpieces{e8/♚/bk}
+\drawthearrow{wq}{bk}
+
+\bigskip
+\drawtheboard
+\drawtheboardnum
+
+\bigskip
+\drawtheboard
+\setupboard
+
+
+\bigskip
+\drawtheboard
+\drawthepathb{a4,b5,c6,d7,e8}
+\setwhitepieces{a1/♖/wqr,b1/♘/wqn,c1/♗/wqb,a4/♕/wq,e1/♔/wk,f1/♗/wkb,g1/♘/wkn,h1/♖/wkr}
+\setwhitepieces{a2/♙,b2/♙,c3/♙,d2/♙,e2/♙,f2/♙,g2/♙,h2/♙}
+\setblackpieces{a8/♜/bqr,b8/♞/bqn,c8/♝/bqb,d8/♛/bq,e8/♚/bk,f8/♝/bkb,g8/♞/bkn,h8/♜/bkr}
+\setblackpieces{a7/♟,b7/♟,c7/♟,d6/♟,e7/♟,f7/♟,g7/♟,h7/♟}
+\drawthearrowb{wq}{bk}
+
+
+
+\begin{figure}
+\begin{center}
+\drawtheboard
+\drawthepathc{d4,c4,b4,a4}
+\drawthepathc{d4,e4,f4,g4,h4}
+\drawthepathc{d4,d5,d6,d7,d8}
+\drawthepathc{d4,d3,d2,d1}
+%
+\drawthepathc{d4,c5,b6,a7}
+\drawthepathc{d4,e5,f6,g7,h8}
+\drawthepathc{d4,e3,f2,g1}
+\drawthepathc{d4,c3,b2,a1}
+%
+\setwhitepieces{d4/♕/wq}
+\end{center}
+\caption{Queen's coverage}
+\end{figure}
+
+
+
+%\begin{center}
+\begin{tabular}{ll}
+% King
+\begin{tabular}{l}
+\drawtheboard
+\drawthepathc{d4,c3,d3,e3,e4,e5,d5,c5,c4}
+%
+\setwhitepieces{d4/♔/wk} \\
+\end{tabular}
+& \begin{minipage}{4cm}\textbf{King}'s coverage is the adjacent square.\end{minipage} \\
+\end{tabular}
+%\end{center}
+
+% Queen
+%\begin{center}
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\drawtheboard
+\drawthepathc{d4,c4,b4,a4}
+\drawthepathc{d4,e4,f4,g4,h4}
+\drawthepathc{d4,d5,d6,d7,d8}
+\drawthepathc{d4,d3,d2,d1}
+%
+\drawthepathc{d4,c5,b6,a7}
+\drawthepathc{d4,e5,f6,g7,h8}
+\drawthepathc{d4,e3,f2,g1}
+\drawthepathc{d4,c3,b2,a1}
+%
+\setwhitepieces{d4/♕/wq} \\
+\end{tabular}
+& \begin{minipage}{4cm}\textbf{Queen}'s coverage is along the diagonals, and the horizontals and verticals.\end{minipage} \\
+\end{tabular}
+%\end{center}
+
+% Bishop
+%\begin{center}
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\drawtheboard
+%\drawthepathc{d4,c4,b4,a4}
+%\drawthepathc{d4,e4,f4,g4,h4}
+%\drawthepathc{d4,d5,d6,d7,d8}
+%\drawthepathc{d4,d3,d2,d1}
+%
+\drawthepathc{d4,c5,b6,a7}
+\drawthepathc{d4,e5,f6,g7,h8}
+\drawthepathc{d4,e3,f2,g1}
+\drawthepathc{d4,c3,b2,a1}
+%
+\setwhitepieces{d4/♗/wqb} \\
+\end{tabular}
+& \begin{minipage}{4cm}\textbf{Bishop}'s coverage is along the diagonals of its colour.\end{minipage} \\
+\end{tabular}
+%\end{center}
+
+%
+% Knight
+%\begin{center}
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\drawtheboard
+\drawthepathc{d4,c6}
+\drawthepathc{d4,e6}
+\drawthepathc{d4,f5}
+\drawthepathc{d4,f3}
+%
+\drawthepathc{d4,e2}
+\drawthepathc{d4,c2}
+\drawthepathc{d4,b3}
+\drawthepathc{d4,b5}
+%
+\setwhitepieces{d4/♘/wqn} 
+\begin{tikzpicture}[remember picture,overlay]
+\draw[->,very	 thick, blue, bend left=45] (d4.west) to (b5.south);
+\draw[->,very	 thick, blue, bend right=45] (d4.west) to (b3.north);
+%
+\draw[->,very	 thick, blue, bend right=45] (d4.north) to (c6.east);
+\draw[->,very	 thick, blue, bend left=45] (d4.north) to (e6.west);
+%
+\draw[->,very	 thick, blue, bend right=45] (d4.east) to (f5.south);
+\draw[->,very	 thick, blue, bend left=45] (d4.east) to (f3.north);
+%
+\draw[->,very	 thick, blue, bend left=45] (d4.south) to (c2.east);
+\draw[->,very	 thick, blue, bend right=45] (d4.south) to (e2.west);
+\end{tikzpicture}
+%
+\\
+\end{tabular}
+& 	\begin{minipage}{4cm}\textbf{Knight}'s coverage can leap over other pieces, and is L-shaped: two squares horizontally or vertically, then one square at right angles, either to the left or right.\end{minipage} \\
+\end{tabular}
+%\end{center}
+
+%
+% Rook
+%\begin{center}
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\drawtheboard
+\drawthepathc{d4,c4,b4,a4}
+\drawthepathc{d4,e4,f4,g4,h4}
+\drawthepathc{d4,d5,d6,d7,d8}
+\drawthepathc{d4,d3,d2,d1}
+%
+%\drawthepathc{d4,c5,b6,a7}
+%\drawthepathc{d4,e5,f6,g7,h8}
+%\drawthepathc{d4,e3,f2,g1}
+%\drawthepathc{d4,c3,b2,a1}
+%
+\setwhitepieces{d4/♖/wqr} \\
+\end{tabular}
+& \begin{minipage}{4cm}\textbf{Rook}'s coverage is the horizontals and verticals.\end{minipage} \\
+%
+\end{tabular}
+%\end{center}
+
+% Pawn 
+%\begin{center}
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\drawtheboard
+\drawthepathc{d4,d5}
+%
+\setwhitepieces{d4/♙/wqrb} 
+\begin{tikzpicture}[remember picture,overlay]
+\draw[->,very	 thick, blue] (wqrb.north west) to (c5.center);
+\draw[->,very	 thick, blue] (wqrb.north east) to (e5.center);
+\end{tikzpicture}
+\\
+\end{tabular}
+& \begin{minipage}{4cm}A \textbf{pawn} can only move forward one square at a time if no other piece blocks the way (initial move may be two squares forward); attack may be diagonally forward.\end{minipage} \\
+%
+\end{tabular}
+%\end{center}
+
+\newpage
+
+Font mappings (latin-to-chess):
+
+
+\begin{tabular}{cll}
+1 & {cwk}  $\to$  & \cfont{cwk} \\
+2 & {cwq}  $\to$  & \cfont{cwq} \\
+3 & {cwr}  $\to$  & \cfont{cwr} \\
+4 & {cwb}  $\to$  & \cfont{cwb} \\
+5 & {cwn}  $\to$  & \cfont{cwn} \\
+6 & {cwp}  $\to$  & \cfont{cwp} \\
+7 & {cbk}  $\to$  & \cfont{cbk} \\
+8 & {cbq}  $\to$  & \cfont{cbq} \\
+9 & {cbr}  $\to$  & \cfont{cbr} \\
+10 & {cbb}  $\to$  & \cfont{cbb} \\
+11 & {cbn}  $\to$  & \cfont{cbn} \\
+12 & {cbp}  $\to$  & \cfont{cbp} \\
+\end{tabular}
+
+\begin{tabular}{cll}
+13 & {sspd}  $\to$  & \cfont{sspd} \\
+14 & {thrt}  $\to$  & \cfont{thrt} \\
+15 & {tdmnd}  $\to$  & \cfont{tdmnd} \\
+16 & {sclb}  $\to$  & \cfont{sclb} \\
+17 & {tspd}  $\to$  & \cfont{tspd} \\
+18 & {shrt}  $\to$  & \cfont{shrt} \\
+19 & {sdmnd}  $\to$  & \cfont{sdmnd} \\
+20 & {tclb}  $\to$  & \cfont{tclb} \\
+\end{tabular}
+
+\begin{tabular}{cll}
+21 & {d1}  $\to$  & \cfont{d1} \\
+22 & {d2}  $\to$  & \cfont{d2} \\
+23 & {d3}  $\to$  & \cfont{d3} \\
+24 & {d4}  $\to$  & \cfont{d4} \\
+25 & {d5}  $\to$  & \cfont{d5} \\
+26 & {d6}  $\to$  & \cfont{d6} \\
+\end{tabular}
+
+\begin{tabular}{cll}
+27 & {llaw}  $\to$  & \cfont{llaw} \\
+28 & {cchem}  $\to$  & \cfont{cchem} \\
+29 & {bbot}  $\to$  & \cfont{bbot} \\
+\end{tabular}
+
+\begin{tabular}{cll}
+30 & {ssocc}  $\to$  & \cfont{ssocc} \\
+31 & {bbas}  $\to$  & \cfont{bbas} \\
+32 & {sstar}  $\to$  & \cfont{sstar} \\
+\end{tabular}
+
+
+\end{document}

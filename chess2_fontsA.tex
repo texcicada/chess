@@ -1,0 +1,89 @@
+\documentclass[12pt,varwidth,border=6pt]{standalone}
+%\documentclass[12pt]{article}
+\usepackage{xcolor}
+\pagecolor{red!3}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\setmainfont{Noto Serif}
+\newcommand\fna{KanjiStrokeOrders}\newfontface\fchessa{\fna}
+\newcommand\fnb{Kelvinch}\newfontface\fchessb{\fnb}
+\newcommand\fnc{Kinryu}\newfontface\fchessc{\fnc}
+%\newcommand\fnd{\detokenize{Kinryu_No14}}\newfontface\fchessd{\fnd}
+\newcommand\fne{Lekhana}\newfontface\fchesse{\fne}
+\newcommand\fnf{Mandala}\newfontface\fchessf{\fnf}
+\newcommand\fng{Meiryo}\newfontface\fchessg{\fng}
+%\newcommand\fnh{Meiryo UI}\newfontface\fchessh{\fnh}
+%%\newcommand\fni{\detokenize{miuのyoyo(小愚修补版)}}\newfontface\fchessi{\fni}
+%\newcommand\fnj{MS Gothic}\newfontface\fchessj{\fnj}
+%\newcommand\fnk{MS Mincho}\newfontface\fchessk{\fnk}
+%\newcommand\fnl{MS PGothic}\newfontface\fchessl{\fnl}
+%\newcommand\fnm{MS PMincho}\newfontface\fchessm{\fnm}
+%\newcommand\fnn{MS UI Gothic}\newfontface\fchessn{\fnn}
+%\newcommand\fno{Noto Sans Symbols}\newfontface\fchesso{\fno}
+%\newcommand\fnp{Noto Sans Symbols2}\newfontface\fchessp{\fnp}
+%\newcommand\fnq{Odana}\newfontface\fchessq{\fnq}
+%\newcommand\fnr{Pali}\newfontface\fchessr{\fnr}
+%\newcommand\fns{Quivira}\newfontface\fchesss{\fns}
+%\newcommand\fnt{Roman Unicode}\newfontface\fchesst{\fnt}
+%\newcommand\fnu{Segoe UI Emoji}\newfontface\fchessu{\fnu}
+%\newcommand\fnv{Segoe UI Symbol}\newfontface\fchessv{\fnv}
+%\newcommand\fnw{Sukhumala}\newfontface\fchessw{\fnw}
+%\newcommand\fnx{Sukhumala Hand Tooled}\newfontface\fchessx{\fnx}
+%\newcommand\fny{Sun-ExtA}\newfontface\fchessy{\fny}
+%\newcommand\fnz{Symbola}\newfontface\fchessz{\fnz}
+%\newcommand\fnaa{Talapanna}\newfontface\fchessaa{\fnaa}
+%\newcommand\fnab{UKIJ Tughra}\newfontface\fchessab{\fnab}
+%\newcommand\fnac{Unifont}\newfontface\fchessac{\fnac}
+%\newcommand\fnad{Veluvana}\newfontface\fchessad{\fnad}
+%\newcommand\fnae{Verajja}\newfontface\fchessae{\fnae}
+%\newcommand\fnaf{Verajja Serif}\newfontface\fchessaf{\fnaf}
+%\newcommand\fnag{YueYuan Belle}\newfontface\fchessag{\fnag}
+
+
+
+\newcommand\chesspieces{♔♕♖♗♘♙♚♛♜♝♞♟}
+\newcommand\showchesspieces[1]{\csname fn#1\endcsname & \Large\csname fchess#1\endcsname \chesspieces \\}
+
+
+\begin{document}
+
+\begin{tabular}{rc}
+\showchesspieces{a}
+\showchesspieces{b}
+\showchesspieces{c}
+%\showchesspieces{d}
+\showchesspieces{e}
+\showchesspieces{f}
+\showchesspieces{g}
+%\showchesspieces{h}
+%%\showchesspieces{i}
+%\showchesspieces{j}
+%\showchesspieces{k}
+%\showchesspieces{l}
+%\showchesspieces{m}
+%& \\
+%\showchesspieces{n}
+%\showchesspieces{o}
+%\showchesspieces{p}
+%\showchesspieces{q}
+%\showchesspieces{r}
+%\showchesspieces{s}
+%\showchesspieces{t}
+%\showchesspieces{u}
+%\showchesspieces{v}
+%\showchesspieces{w}
+%\showchesspieces{x}
+%\showchesspieces{y}
+%\showchesspieces{z}
+%& \\
+%\showchesspieces{aa}
+%\showchesspieces{ab}
+%\showchesspieces{ac}
+%\showchesspieces{ad}
+%\showchesspieces{ae}
+%\showchesspieces{af}
+%\showchesspieces{ag}
+\end{tabular}
+
+
+\end{document}
